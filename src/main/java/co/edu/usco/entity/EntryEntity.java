@@ -36,6 +36,9 @@ public class EntryEntity {
     @Column(name = "exit_time")
     private Integer exitTime;
 
+    @Column(name = "status")
+    private String status;
+
     @ManyToOne
     @JoinColumn(name = "vehicle_id", referencedColumnName = "id")
     private VehicleTypeEntity vehicle;

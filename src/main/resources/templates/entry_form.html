@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Entry Form</title>
+    <style>
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .disabled {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.8em;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/entries">Entries List</a> |
+    <form action="#" th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit">Logout</button>
+    </form>
+</nav>
+<h1 th:text="${entry.id} ? 'Update Entry' : 'Create New Entry'">Entry Form</h1>
+
+<form th:action="${entry.id} ? @{/entries/update/{id}(id=${entry.id})} : @{/entries}"
+      method="post"
+      th:object="${entry}">
+
+    <input type="hidden" th:field="*{id}" th:if="${entry.id}"/>
+
+    <div class="form-group">
+        <label for="plate">Plate:</label>
+        <input type="text"
+               id="plate"
+               th:field="*{plate}"
+               required
+               pattern="[A-Za-z0-9]{6}"
+               title="La placa debe tener exactamente 6 caracteres alfanuméricos"
+               oninput="validatePlate(this)"
+               onkeyup="this.value = this.value.toUpperCase()"/>
+        <span id="plateError" class="error-message">La placa debe tener exactamente 6 caracteres alfanuméricos</span>
+    </div>
+
+    <div class="form-group">
+        <label for="location">Location:</label>
+        <input type="text"
+               id="location"
+               th:field="*{location}"
+               required/>
+    </div>
+
+    <div class="form-group">
+        <label for="entry">Entry:</label>
+        <input type="number"
+               id="entry"
+               th:field="*{entryTime}"
+               required/>
+    </div>
+
+    <div class="form-group">
+        <label for="status">Status:</label>
+        <select id="status"
+                th:field="*{status}"
+                required
+                onchange="handleStatusChange()">
+            <option value="IN">In</option>
+            <option value="OUT">Out</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="exit">Exit:</label>
+        <input type="number"
+               id="exit"
+               th:field="*{exitTime}"
+               th:disabled="${entry.status != 'OUT'}"
+               th:required="${entry.status == 'OUT'}"
+               class="exit-input"/>
+    </div>
+
+    <div class="form-group">
+        <label for="vehicule">Vehicle Type:</label>
+        <select id="vehicule"
+                th:field="*{vehicle}"
+                required>
+            <option th:each="type : ${vehicleType}"
+                    th:value="${type.id}"
+                    th:text="${type.typeName}">
+            </option>
+        </select>
+    </div>
+
+    <button type="submit" th:text="${entry.id} ? 'Update' : 'Create'">Submit</button>
+    <a href="/entries"><button type="button">Cancel</button></a>
+</form>
+
+<script>
+    function validatePlate(input) {
+        const plate = input.value;
+        const plateError = document.getElementById('plateError');
+        const regex = /^[A-Za-z0-9]{6}$/;
+
+        if (!regex.test(plate)) {
+            plateError.style.display = 'block';
+            input.setCustomValidity('La placa debe tener exactamente 6 caracteres alfanuméricos');
+        } else {
+            plateError.style.display = 'none';
+            input.setCustomValidity('');
+        }
+    }
+
+    function handleStatusChange() {
+        const statusSelect = document.getElementById('status');
+        const exitInput = document.getElementById('exit');
+
+        if (statusSelect.value === 'OUT') {
+            exitInput.disabled = false;
+            exitInput.required = true;
+            exitInput.classList.remove('disabled');
+        } else {
+            exitInput.disabled = true;
+            exitInput.required = false;
+            exitInput.value = '';
+            exitInput.classList.add('disabled');
+        }
+    }
+
+    // Ejecutar al cargar la página para establecer el estado inicial
+    document.addEventListener('DOMContentLoaded', function() {
+        const initialStatus = document.getElementById('status').value;
+        const exitInput = document.getElementById('exit');
+
+        if (initialStatus === 'OUT' && exitInput.value) {
+            exitInput.disabled = false;
+            exitInput.required = true;
+            exitInput.classList.remove('disabled');
+        } else if (initialStatus === 'IN') {
+            exitInput.disabled = true;
+            exitInput.required = false;
+            exitInput.classList.add('disabled');
+        }
+    });
+</script>
+</body>
+</html>

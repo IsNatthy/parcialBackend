@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Entries List</title>
+</head>
+<body>
+<nav>
+    <a href="/entries">Entries List</a> |
+    <form action="#" th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit">Logout</button>
+    </form>
+
+</nav>
+<h1>Entries List</h1>
+<div sec:authorize="hasAuthority('ADMIN')">
+    <a href="/entries/new">Add New Entry</a>
+</div><table>
+    <thead>
+    <tr>
+        <th>Plate</th>
+        <th>Location</th>
+        <th>Entry</th>
+        <th>Exit</th>
+        <th>Vehicle Type</th>
+        <th sec:authorize="hasAuthority('ADMIN')">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="entry : ${entries}">
+        <td th:text="${entry.plate}"></td>
+        <td th:text="${entry.location}"></td>
+        <td th:text="${entry.entryTime}"></td>
+        <td th:text="${entry.exitTime}"></td>
+        <td th:text="${entry.vehicle.typeName}"></td>
+        <td>
+            <div sec:authorize="hasAuthority('ADMIN')">
+                <a th:href="@{/entries/edit/{id}(id=${entry.id})}">Edit</a>
+            </div>
+
+            <div sec:authorize="hasAuthority('ADMIN')">
+                <a th:href="@{/entries/delete/{id}(id=${entry.id})}" onclick="return confirm('Are you sure?')">Delete</a>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
