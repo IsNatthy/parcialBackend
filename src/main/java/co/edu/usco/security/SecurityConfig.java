@@ -27,7 +27,8 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(HttpMethod.GET ,"/entries").hasAnyAuthority( "ADMIN", "CLIENT", "ACOMODADOR");
-                    auth.requestMatchers("/entries/**").hasAuthority("ADMIN");
+                    auth.requestMatchers("/entries/**").hasAnyAuthority("ADMIN", "ACOMODADOR");
+                    auth.requestMatchers("/auth/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .formLogin(login -> {

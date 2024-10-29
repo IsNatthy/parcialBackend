@@ -16,4 +16,4 @@ INSERT INTO users (first_name, last_name, email, password) VALUES ('Nathalia', '
 -- Rol Users
 INSERT INTO users_role (user_id, role_id) VALUES (1, 1);  -- Julian con rol ADMIN
 INSERT INTO users_role (user_id, role_id) VALUES (2, 2);  -- Yohan con rol CLIENTE
-INSERT INTO users_role (user_id, role_id) VALUES (3, 1);  -- Nathalia con rol ACOMODADOR
+INSERT INTO users_role (user_id, role_id) VALUES (3, 1);  -- Nathalia con rol ADMIN
